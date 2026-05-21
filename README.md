@@ -12,11 +12,11 @@ Your co-pilot for campus placements. Students discover internships and jobs, sav
 
 ## Why this project
 
-Campus placements are still messy — job posts land in WhatsApp groups, emails, and notice boards, and students have no single place to track what they've applied to or what's closing soon.
+Campus placements are still messy, job posts land in WhatsApp groups, emails, and notice boards, and students have no single place to track what they've applied to or what's closing soon.
 
 PlacePilot brings that into one portal. Students can find roles matched to their skills and batch, save openings for later, and follow deadlines from a personal dashboard. Placement cells get a lightweight admin panel to publish jobs, notices, and interview schedules without juggling spreadsheets.
 
-It is built around a real campus workflow, not a tutorial clone — practical enough to use during placement season, and strong enough to show Django, authentication, CRUD, filtering, file uploads, and a REST API in one cohesive product.
+It is built around a real campus workflow, practical enough to use during placement season, and strong enough to show Django, authentication, CRUD, filtering, file uploads, and a REST API in one cohesive product.
 
 ---
 
