@@ -151,15 +151,3 @@ DATABASES = {
 
 Then run `python manage.py migrate`.
 
----
-
-## Resume bullet points
-
-Copy-paste ready for your resume or LinkedIn:
-
-- Built **PlacePilot**, a Django campus job portal with role-based dashboards for students and placement cells
-- Implemented job search, multi-filter listings, apply/save workflows, and a skill-based recommendation engine
-- Designed REST API with Django REST Framework for programmatic job listing retrieval
-- Added placement admin panel for posting opportunities, notices, and interview schedules
-
----
