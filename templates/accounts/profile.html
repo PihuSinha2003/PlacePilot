@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile — PlacePilot{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h3 class="mb-1">Your Profile</h3>
+                    <p class="text-muted mb-4">Keep this updated for better job recommendations</p>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.name == 'resume' and form.instance.resume %}
+                            <div class="mt-1 small">
+                                Current: <a href="{{ form.instance.resume.url }}" target="_blank">View resume</a>
+                            </div>
+                            {% endif %}
+                            {% if field.errors %}
+                            <div class="text-danger small">{{ field.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        <button type="submit" class="btn btn-primary">Save Profile</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('form input:not([type=file]), form select, form textarea').forEach(el => {
+    if (el.tagName === 'SELECT') el.classList.add('form-select');
+    else el.classList.add('form-control');
+});
+document.querySelector('form input[type=file]').classList.add('form-control');
+</script>
+{% endblock %}

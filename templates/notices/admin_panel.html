@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Placement Panel — PlacePilot{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center page-header">
+        <h2>Placement Panel</h2>
+        <div class="d-flex gap-2">
+            <a href="{% url 'notices:notice_create' %}" class="btn btn-primary btn-sm">Post Notice</a>
+            <a href="{% url 'notices:interview_create' %}" class="btn btn-outline-primary btn-sm">Schedule Interview</a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <h5>Your Notices</h5>
+            {% if notices %}
+            <div class="list-group">
+                {% for notice in notices %}
+                <div class="list-group-item">
+                    <strong>{{ notice.title }}</strong>
+                    <span class="text-muted small ms-2">{{ notice.created_at|date:"M d" }}</span>
+                    {% if notice.is_pinned %}<span class="badge bg-primary ms-1">Pinned</span>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted">No notices yet.</p>
+            {% endif %}
+        </div>
+        <div class="col-lg-6">
+            <h5>Interview Schedules</h5>
+            {% if interviews %}
+            <div class="list-group">
+                {% for interview in interviews %}
+                <div class="list-group-item">
+                    <strong>{{ interview.title }}</strong> — {{ interview.company }}
+                    <div class="small text-muted">{{ interview.scheduled_date|date:"M d" }} · {{ interview.venue }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted">No interviews scheduled.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Notices — PlacePilot{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h2>Campus Notices</h2>
+        <p class="text-muted">Announcements and interview schedules from the placement cell</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <h5 class="mb-3">Announcements</h5>
+            {% if notices %}
+                {% for notice in notices %}
+                <div class="card border-0 shadow-sm mb-3 {% if notice.is_pinned %}notice-pinned{% endif %}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="mb-1">{{ notice.title }}</h5>
+                            {% if notice.is_pinned %}
+                            <span class="badge bg-primary">Pinned</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-muted small mb-2">{{ notice.created_at|date:"F d, Y" }}</p>
+                        <p class="mb-0" style="white-space: pre-line;">{{ notice.content }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+            <p class="text-muted">No notices posted yet.</p>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-5">
+            <h5 class="mb-3">Upcoming Interviews</h5>
+            {% if interviews %}
+                {% for interview in interviews %}
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-body">
+                        <h6 class="mb-1">{{ interview.title }}</h6>
+                        <p class="text-muted small mb-2">{{ interview.company }}</p>
+                        <p class="mb-1"><i class="bi bi-calendar"></i> {{ interview.scheduled_date|date:"M d, Y" }} at {{ interview.scheduled_time|time:"g:i A" }}</p>
+                        <p class="mb-0 small"><i class="bi bi-pin-map"></i> {{ interview.venue }}</p>
+                        {% if interview.notes %}
+                        <p class="mt-2 mb-0 small text-muted">{{ interview.notes }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+            <p class="text-muted">No upcoming interviews scheduled.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

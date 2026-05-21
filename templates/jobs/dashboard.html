@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard — PlacePilot{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h2>Welcome, {{ user.first_name|default:user.username }}</h2>
+        <p class="text-muted">Track your applications and discover roles matched to your profile</p>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="card stat-card bg-primary text-white">
+                <div class="card-body">
+                    <h3 class="mb-0">{{ applied_count }}</h3>
+                    <small>Applied</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card stat-card bg-success text-white">
+                <div class="card-body">
+                    <h3 class="mb-0">{{ saved_count }}</h3>
+                    <small>Saved</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card stat-card bg-info text-white">
+                <div class="card-body">
+                    <h3 class="mb-0">{{ shortlisted_count }}</h3>
+                    <small>Shortlisted</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card stat-card bg-warning text-dark">
+                <div class="card-body">
+                    <h3 class="mb-0">{{ upcoming_deadlines|length }}</h3>
+                    <small>Upcoming Deadlines</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recommended for You</h5>
+                    <a href="{% url 'jobs:list' %}" class="small">Browse all</a>
+                </div>
+                <div class="card-body">
+                    {% if recommended_jobs %}
+                    <div class="list-group list-group-flush">
+                        {% for job in recommended_jobs %}
+                        <a href="{% url 'jobs:detail' job.pk %}" class="list-group-item list-group-item-action px-0">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <strong>{{ job.title }}</strong>
+                                    <div class="small text-muted">{{ job.company }} &middot; {{ job.location }}</div>
+                                </div>
+                                {% if job.is_deadline_near %}
+                                <span class="badge deadline-soon align-self-start">{{ job.days_left }}d</span>
+                                {% endif %}
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted mb-0">Add skills to your <a href="{% url 'accounts:profile' %}">profile</a> to get better matches.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Deadline Reminders</h5>
+                    <a href="{% url 'jobs:my_applications' %}" class="small">All applications</a>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_deadlines %}
+                    <div class="list-group list-group-flush">
+                        {% for app in upcoming_deadlines %}
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <strong>{{ app.job.title }}</strong>
+                                    <div class="small text-muted">{{ app.job.company }}</div>
+                                </div>
+                                <span class="badge {% if app.job.is_deadline_near %}deadline-soon{% else %}bg-light text-dark{% endif %}">
+                                    {{ app.job.deadline|date:"M d" }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted mb-0">No upcoming deadlines from your applications.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Recent Applications</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_applications %}
+                    <table class="table table-sm mb-0">
+                        <thead><tr><th>Role</th><th>Status</th><th>Date</th></tr></thead>
+                        <tbody>
+                            {% for app in recent_applications %}
+                            <tr>
+                                <td><a href="{% url 'jobs:detail' app.job.pk %}">{{ app.job.title }}</a></td>
+                                <td><span class="badge bg-secondary">{{ app.get_status_display }}</span></td>
+                                <td class="text-muted small">{{ app.applied_at|date:"M d" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <p class="text-muted mb-0">You haven't applied to any roles yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Saved Jobs</h5>
+                </div>
+                <div class="card-body">
+                    {% if saved_jobs %}
+                    <ul class="list-unstyled mb-0">
+                        {% for item in saved_jobs %}
+                        <li class="mb-2">
+                            <a href="{% url 'jobs:detail' item.job.pk %}">{{ item.job.title }}</a>
+                            <span class="text-muted small">— {{ item.job.company }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <a href="{% url 'jobs:saved' %}" class="small">View all saved</a>
+                    {% else %}
+                    <p class="text-muted mb-0">No saved jobs yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

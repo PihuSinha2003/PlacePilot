@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Opportunities — PlacePilot{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h2>Opportunities</h2>
+        <p class="text-muted">Find internships and jobs that fit your profile</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-3">
+            <div class="filter-panel">
+                <h6 class="mb-3">Filters</h6>
+                <form method="get">
+                    <div class="mb-3">
+                        <label class="form-label small">Search</label>
+                        {{ filter.form.q }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Role</label>
+                        {{ filter.form.role }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Location</label>
+                        {{ filter.form.location }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Batch Year</label>
+                        {{ filter.form.batch_year }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Type</label>
+                        {{ filter.form.job_type }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Experience</label>
+                        {{ filter.form.experience_level }}
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm w-100">Apply Filters</button>
+                    <a href="{% url 'jobs:list' %}" class="btn btn-link btn-sm w-100 mt-1">Clear</a>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            {% if jobs %}
+            <p class="text-muted small mb-3">{{ jobs.count }} result{{ jobs.count|pluralize }}</p>
+            <div class="row g-3">
+                {% for job in jobs %}
+                <div class="col-md-6">
+                    <div class="card job-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <span class="badge bg-secondary">{{ job.get_job_type_display }}</span>
+                                {% if job.is_deadline_near %}
+                                <span class="badge deadline-soon">Deadline in {{ job.days_left }} days</span>
+                                {% else %}
+                                <span class="badge bg-light text-dark">Due {{ job.deadline|date:"M d" }}</span>
+                                {% endif %}
+                            </div>
+                            <h5 class="mt-2">{{ job.title }}</h5>
+                            <p class="text-muted mb-1">{{ job.company }} &middot; {{ job.role }}</p>
+                            <p class="small text-muted"><i class="bi bi-geo-alt"></i> {{ job.location }}</p>
+                            <div class="d-flex gap-2 mt-3">
+                                <a href="{% url 'jobs:detail' job.pk %}" class="btn btn-primary btn-sm">Details</a>
+                                {% if user.is_authenticated %}
+                                    {% if job.id in applied_ids %}
+                                    <span class="btn btn-outline-success btn-sm disabled">Applied</span>
+                                    {% elif job.id in saved_ids %}
+                                    <a href="{% url 'jobs:save' job.pk %}?next={% url 'jobs:list' %}" class="btn btn-outline-secondary btn-sm">Unsave</a>
+                                    {% else %}
+                                    <a href="{% url 'jobs:save' job.pk %}?next={% url 'jobs:list' %}" class="btn btn-outline-primary btn-sm">Save</a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="bi bi-funnel"></i>
+                <p>No jobs match your filters. Try adjusting your search.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.filter-panel input, .filter-panel select').forEach(el => {
+    el.classList.add('form-control', 'form-control-sm');
+});
+document.querySelectorAll('.filter-panel select').forEach(el => {
+    el.classList.remove('form-control');
+    el.classList.add('form-select', 'form-select-sm');
+});
+</script>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}PlacePilot — Internships & Jobs for Students{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container text-center">
+        <h1 class="display-5 mb-3">Navigate your campus placement journey</h1>
+        <p class="lead mb-4 opacity-75">Discover roles, track applications, and get alerts matched to your skills and batch.</p>
+        <div class="d-flex gap-2 justify-content-center flex-wrap">
+            <a href="{% url 'jobs:list' %}" class="btn btn-light btn-lg">Browse Opportunities</a>
+            {% if not user.is_authenticated %}
+            <a href="{% url 'accounts:signup' %}" class="btn btn-outline-light btn-lg">Create Account</a>
+            {% else %}
+            <a href="{% url 'jobs:dashboard' %}" class="btn btn-outline-light btn-lg">Go to Dashboard</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="container my-5">
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="text-center p-4">
+                <i class="bi bi-search fs-1 text-primary"></i>
+                <h5 class="mt-3">Smart Search</h5>
+                <p class="text-muted">Filter by role, location, batch year, and experience level.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="text-center p-4">
+                <i class="bi bi-bookmark-star fs-1 text-primary"></i>
+                <h5 class="mt-3">Save & Apply</h5>
+                <p class="text-muted">Bookmark openings for later or apply directly from your dashboard.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="text-center p-4">
+                <i class="bi bi-bell fs-1 text-primary"></i>
+                <h5 class="mt-3">Personalized Alerts</h5>
+                <p class="text-muted">Get recommended jobs based on your skills, branch, and profile.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center page-header">
+        <h3 class="mb-0">Latest Openings</h3>
+        <a href="{% url 'jobs:list' %}" class="btn btn-outline-primary btn-sm">View all</a>
+    </div>
+
+    {% if recent_jobs %}
+    <div class="row g-4">
+        {% for job in recent_jobs %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card job-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-primary-subtle text-primary">{{ job.get_job_type_display }}</span>
+                        {% if job.is_deadline_near %}
+                        <span class="badge deadline-soon">{{ job.days_left }}d left</span>
+                        {% endif %}
+                    </div>
+                    <h5 class="card-title">{{ job.title }}</h5>
+                    <p class="text-muted mb-1">{{ job.company }}</p>
+                    <p class="small mb-3"><i class="bi bi-geo-alt"></i> {{ job.location }}</p>
+                    <a href="{% url 'jobs:detail' job.pk %}" class="btn btn-sm btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="bi bi-briefcase"></i>
+        <p>No openings yet. Check back soon.</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

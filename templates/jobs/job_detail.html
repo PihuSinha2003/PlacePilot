@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ job.title }} — PlacePilot{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <span class="badge bg-primary">{{ job.get_job_type_display }}</span>
+                        <span class="badge bg-secondary">{{ job.get_experience_level_display }}</span>
+                        {% if job.is_deadline_near %}
+                        <span class="badge deadline-soon">Closing in {{ job.days_left }} days</span>
+                        {% endif %}
+                    </div>
+                    <h2>{{ job.title }}</h2>
+                    <p class="text-muted fs-5">{{ job.company }}</p>
+                    <div class="row g-3 mb-4 text-muted">
+                        <div class="col-sm-6"><i class="bi bi-geo-alt"></i> {{ job.location }}</div>
+                        <div class="col-sm-6"><i class="bi bi-person-badge"></i> {{ job.role }}</div>
+                        <div class="col-sm-6"><i class="bi bi-calendar-event"></i> Deadline: {{ job.deadline|date:"F d, Y" }}</div>
+                        <div class="col-sm-6"><i class="bi bi-mortarboard"></i> Batch {{ job.min_batch_year }}–{{ job.max_batch_year }}</div>
+                        {% if job.salary %}
+                        <div class="col-sm-6"><i class="bi bi-currency-rupee"></i> {{ job.salary }}</div>
+                        {% endif %}
+                    </div>
+                    <h5>Description</h5>
+                    <p class="text-muted" style="white-space: pre-line;">{{ job.description }}</p>
+                    {% if job.required_skills %}
+                    <h5 class="mt-4">Required Skills</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for skill in job.skill_list %}
+                        <span class="badge bg-light text-dark border">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mt-4 mt-lg-0">
+            <div class="card border-0 shadow-sm sticky-top" style="top: 80px;">
+                <div class="card-body p-4">
+                    {% if user.is_authenticated %}
+                        {% if applied %}
+                        <button class="btn btn-success w-100 mb-2" disabled>Already Applied</button>
+                        {% else %}
+                        <form method="post" action="{% url 'jobs:apply' job.pk %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label small">Cover note (optional)</label>
+                                <textarea name="cover_note" class="form-control form-control-sm" rows="3" placeholder="Why you're a good fit..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 mb-2">Apply Now</button>
+                        </form>
+                        {% endif %}
+                        <a href="{% url 'jobs:save' job.pk %}?next={% url 'jobs:detail' job.pk %}" class="btn btn-outline-secondary w-100">
+                            {% if saved %}Remove from Saved{% else %}Save for Later{% endif %}
+                        </a>
+                    {% else %}
+                    <p class="text-muted small">Sign in to apply or save this opportunity.</p>
+                    <a href="{% url 'accounts:login' %}?next={% url 'jobs:detail' job.pk %}" class="btn btn-primary w-100">Login to Apply</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

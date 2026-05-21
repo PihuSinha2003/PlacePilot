@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Saved Jobs — PlacePilot{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h2>Saved Jobs</h2>
+    </div>
+
+    {% if saved_jobs %}
+    <div class="row g-3">
+        {% for item in saved_jobs %}
+        <div class="col-md-6">
+            <div class="card job-card">
+                <div class="card-body">
+                    <h5>{{ item.job.title }}</h5>
+                    <p class="text-muted mb-1">{{ item.job.company }}</p>
+                    <p class="small text-muted">Saved {{ item.saved_at|date:"M d, Y" }}</p>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'jobs:detail' item.job.pk %}" class="btn btn-primary btn-sm">View</a>
+                        <a href="{% url 'jobs:save' item.job.pk %}?next={% url 'jobs:saved' %}" class="btn btn-outline-secondary btn-sm">Remove</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="bi bi-bookmark"></i>
+        <p>No saved jobs. <a href="{% url 'jobs:list' %}">Find something to save</a></p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

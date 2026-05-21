@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}My Applications — PlacePilot{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h2>My Applications</h2>
+    </div>
+
+    {% if applications %}
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Role</th>
+                        <th>Company</th>
+                        <th>Status</th>
+                        <th>Applied</th>
+                        <th>Deadline</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in applications %}
+                    <tr>
+                        <td><a href="{% url 'jobs:detail' app.job.pk %}">{{ app.job.title }}</a></td>
+                        <td>{{ app.job.company }}</td>
+                        <td><span class="badge bg-secondary">{{ app.get_status_display }}</span></td>
+                        <td class="text-muted">{{ app.applied_at|date:"M d, Y" }}</td>
+                        <td>
+                            {% if app.job.is_deadline_near %}
+                            <span class="badge deadline-soon">{{ app.job.deadline|date:"M d" }}</span>
+                            {% else %}
+                            {{ app.job.deadline|date:"M d, Y" }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="bi bi-send"></i>
+        <p>No applications yet. <a href="{% url 'jobs:list' %}">Browse opportunities</a></p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
